@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Регистрация на соревнования</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'laba_1/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Регистрация на соревнования</h1>
+        {% if submitted_data %} 
+        <div class="success">
+            <strong>Данные успешно отправлены!</strong>
+        </div>
+        
+        <h3>Отправленные данные:</h3>
+        <table>
+            <tr>
+                <th>Поле</th>
+                <th>Значение</th>
+            </tr>
+            <tr>
+                <td><strong>ФИО</strong></td>
+                <td>{{ submitted_data.full_name }}</td>
+            </tr>
+            <tr>
+                <td><strong>Email</strong></td>
+                <td>{{ submitted_data.email }}</td>
+            </tr>
+            <tr>
+                <td><strong>Регион</strong></td>
+                <td>{{ submitted_data.region }}</td>
+            </tr>
+            <tr>
+                <td><strong>Согласие</strong></td>
+                <td>
+                    {% if submitted_data.agree_pd %}
+                        Дано
+                    {% else %}
+                        Не дано
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+        
+        <hr>
+        {% endif %}
+        
+        <h3>Форма регистрации</h3>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="required">ФИО участника</label>
+                <input type="text" name="full_name" 
+                    value="{{ form.full_name.value|default:'' }}" 
+                    placeholder="Иванов Иван Иванович">
+                {% if form.full_name.errors %}
+                    <div class="error">{{ form.full_name.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label class="required">Электронная почта</label>
+                <input type="email" name="email" 
+                    value="{{ form.email.value|default:'' }}" 
+                    placeholder="example@mail.ru">
+                {% if form.email.errors %}
+                    <div class="error">{{ form.email.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label class="required">Регион</label>
+                {{ form.region }}
+                {% if form.region.errors %}
+                    <div class="error">{{ form.region.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="checkbox-group">
+                <input type="checkbox" name="agree_pd" id="agree_pd" 
+                    {% if form.agree_pd.value %}checked{% endif %}>
+                <label for="agree_pd" class="required">Согласие на обработку персональных данных</label>
+                {% if form.agree_pd.errors %}
+                    <div class="error">{{ form.agree_pd.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <button type="submit">Отправить заявку</button>
+        </form>
+    </div>
+</body>
+</html>
