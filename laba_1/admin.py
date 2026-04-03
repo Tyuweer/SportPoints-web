@@ -47,9 +47,9 @@ class ResultAdmin(admin.ModelAdmin):
     ordering = ('competition', 'distance', 'place')
     list_per_page = 50
     
-    # Запрет редактирования результатов (они из протокола)
-    def has_change_permission(self, request, obj=None):
-        return False  # Только просмотр
+    # # Запрет редактирования результатов (они из протокола)
+    # def has_change_permission(self, request, obj=None):
+    #     return False  # Только просмотр
     
-    def has_delete_permission(self, request, obj=None):
-        return False  # Нельзя удалять
+    # def has_delete_permission(self, request, obj=None):
+    #     return False  # Нельзя удалять

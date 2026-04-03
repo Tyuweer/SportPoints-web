@@ -169,6 +169,8 @@ class Result(models.Model):
     result_time = models.CharField(
         "Результат",
         max_length=20,
+        null=True,
+        blank=True,
         help_text="Время: 00:16,46"
     )
     final_result = models.CharField(
