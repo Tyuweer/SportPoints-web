@@ -1,0 +1,2 @@
+python manage.py runserver
+python manage.py parse_protocol 6 --parser-type "Всероссийские соревнования" --manual

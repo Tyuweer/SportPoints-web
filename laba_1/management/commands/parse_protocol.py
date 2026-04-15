@@ -261,6 +261,11 @@ class Command(BaseCommand):
         if not full_name:
             return None
         
+        normalized_name = self._normalize_athlete_name(full_name)
+
+        if not normalized_name:
+            return None
+        
         # Преобразуем год рождения в int
         if birth_year:
             try:
@@ -270,7 +275,7 @@ class Command(BaseCommand):
         
         # Ищем или создаём
         athlete, created = Athlete.objects.get_or_create(
-            full_name=full_name,
+            full_name=normalized_name,
             birth_year=birth_year,
             defaults={
                 'team': team,
@@ -279,9 +284,32 @@ class Command(BaseCommand):
         
         if created:
             self.stdout.write(self.style.SUCCESS(f'   + Спортсмен: {full_name} ({birth_year or "?"})'))
-        
+            self.stdout.write(self.style.SUCCESS(f'   + Спортсмен: {normalized_name} ({birth_year or "?"})'))
         return athlete
-    
+    def _normalize_athlete_name(self, full_name: str) -> str:
+        """
+        Нормализует имя спортсмена: оставляет только Имя Фамилию (без отчества).
+
+        Args:
+            full_name: Полное ФИО (например: "Иванов Иван Иванович" или "Иванов Иван")
+
+        Returns:
+            Нормализованное имя (например: "Иванов Иван")
+        """
+        if not full_name:
+            return ""
+
+        parts = full_name.strip().split()
+
+        # Если есть хотя бы 2 части (Фамилия Имя), берем первые две
+        if len(parts) >= 2:
+            return f"{parts[0]} {parts[1]}"
+        # Если только одна часть, возвращаем как есть
+        elif len(parts) == 1:
+            return parts[0]
+        else:
+            return ""
+
     def _save_result(self, athlete: Athlete, competition: Competition, 
                      distance: Distance, res_data: dict) -> Result | None:
         """
