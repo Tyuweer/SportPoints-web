@@ -222,3 +222,37 @@ class AthleteResultForm(forms.Form):
         if not re.match(pattern, time_str):
             raise forms.ValidationError("Время должно быть в формате ММ:СС.мс (например, 01:23.45)")
         return time_str
+
+
+class AthleteEditForm(forms.ModelForm):
+    """
+    Форма для редактирования спортсмена
+    Основана на модели Athlete
+    """
+    class Meta:
+        model = Athlete
+        fields = ['full_name', 'birth_year', 'team']
+        widgets = {
+            'full_name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Иванов Иван Иванович'
+            }),
+            'birth_year': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': '2000'
+            }),
+            'team': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'г. Москва, Динамо'
+            })
+        }
+        labels = {
+            'full_name': 'ФИО Спортсмена',
+            'birth_year': 'Год рождения',
+            'team': 'Команда/Регион'
+        }
+        help_texts = {
+            'full_name': 'Введите Фамилию Имя Отчество',
+            'birth_year': 'Например: 2000',
+            'team': 'Например: г. Москва, Динамо'
+        }

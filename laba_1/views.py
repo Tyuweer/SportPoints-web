@@ -1,6 +1,6 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .forms import CompetitionForm, AthleteSearchForm, CompetitionSelectionForm, AthleteResultForm
+from .forms import CompetitionForm, AthleteSearchForm, CompetitionSelectionForm, AthleteResultForm, AthleteEditForm
 from .models import Athlete, Result, Competition, Distance
 from django.db.models import Q
 from laba_1.core.utils import get_points_by_place, parse_time_to_seconds, calculate_rank_for_result
@@ -270,3 +270,78 @@ def add_member(request):
     }
 
     return render(request, 'add_member.html', context)
+
+
+def athlete_list(request):
+    """
+    Страница со списком всех спортсменов (не удаленных)
+    Отображает таблицу с кнопками: Подробнее, Изменить, Удалить
+    """
+    # Получаем только не удаленных спортсменов
+    athletes = Athlete.objects.filter(removed=False).order_by('full_name')
+    
+    context = {
+        'athletes': athletes,
+    }
+    
+    return render(request, 'athlete_list.html', context)
+
+
+def athlete_detail(request, athlete_id):
+    """
+    Страница детальной информации о спортсмене
+    Показывает данные спортсмена + все его результаты
+    """
+    athlete = get_object_or_404(Athlete, pk=athlete_id, removed=False)
+    
+    # Получаем все результаты спортсмена
+    results = Result.objects.filter(athlete=athlete).select_related(
+        'competition', 'distance'
+    ).order_by('-competition__date')
+    
+    context = {
+        'athlete': athlete,
+        'results': results,
+    }
+    
+    return render(request, 'athlete_detail.html', context)
+
+
+def athlete_edit(request, athlete_id):
+    """
+    Страница редактирования спортсмена
+    Загружает данные в форму и сохраняет изменения
+    """
+    athlete = get_object_or_404(Athlete, pk=athlete_id, removed=False)
+    
+    if request.method == 'POST':
+        form = AthleteEditForm(request.POST, instance=athlete)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f'Данные спортсмена "{athlete.full_name}" успешно обновлены!')
+            return redirect('athlete_detail', athlete_id=athlete.id)
+    else:
+        form = AthleteEditForm(instance=athlete)
+    
+    context = {
+        'form': form,
+        'athlete': athlete,
+    }
+    
+    return render(request, 'athlete_edit.html', context)
+
+
+def athlete_remove(request, athlete_id):
+    """
+    Мягкое удаление спортсмена
+    Устанавливает поле removed=True и перенаправляет на список
+    """
+    athlete = get_object_or_404(Athlete, pk=athlete_id)
+    
+    # Устанавливаем флаг удаления
+    athlete.removed = True
+    athlete.save()
+    
+    messages.success(request, f'Спортсмен "{athlete.full_name}" успешно удален!')
+    
+    return redirect('athlete_list')

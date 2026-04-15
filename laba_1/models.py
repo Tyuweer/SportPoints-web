@@ -112,6 +112,11 @@ class Athlete(models.Model):
         auto_now_add=True,
         help_text="Когда спортсмен впервые появился в базе"
     )
+    removed = models.BooleanField(
+        "Удален",
+        default=False,
+        help_text="Отметьте True для мягкого удаления объекта"
+    )
     
     class Meta:
         verbose_name = "Спортсмен"
