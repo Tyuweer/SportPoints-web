@@ -1,12 +1,12 @@
 from django import forms
-from .models import Competition, Athlete
+from .models import Competition, Athlete, Distance, Result
 
 class CompetitionForm(forms.Form):
     """
     Форма регистрации участника на соревнования (Задание 7)
     Эта форма продолжает работать для старого функционала
     """
-    
+
     REGION_CHOICES = [
         ('', 'Выберите регион'),
         ('Moscow', 'Москва'),
@@ -16,7 +16,7 @@ class CompetitionForm(forms.Form):
         ('Ekat', 'Екатеринбург'),
         ('Kras', 'Красноярск'),
     ]
-    
+
     full_name = forms.CharField(
         label='ФИО участника',
         max_length=100,
@@ -26,7 +26,7 @@ class CompetitionForm(forms.Form):
             'placeholder': 'Иванов Иван Иванович'
         })
     )
-    
+
     email = forms.EmailField(
         label='Электронная почта',
         required=True,
@@ -35,7 +35,7 @@ class CompetitionForm(forms.Form):
             'placeholder': 'example@mail.ru'
         })
     )
-    
+
     region = forms.ChoiceField(
         label='Регион',
         choices=REGION_CHOICES,
@@ -44,7 +44,7 @@ class CompetitionForm(forms.Form):
             'class': 'form-control'
         })
     )
-    
+
     agree_pd = forms.BooleanField(
         label='Согласие на обработку персональных данных',
         required=True,
@@ -70,7 +70,7 @@ class AthleteSearchForm(forms.Form):
         }),
         help_text="Начните вводить фамилию для поиска"
     )
-    
+
     # Служебное поле - согласие (не хранится в БД)
     agree_pd = forms.BooleanField(
         label="Согласие на обработку персональных данных",
@@ -79,7 +79,7 @@ class AthleteSearchForm(forms.Form):
             'class': 'form-check-input'
         })
     )
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Можно добавить подсказки с существующими спортсменами
@@ -102,7 +102,7 @@ class CompetitionSelectionForm(forms.Form):
         empty_label="Выберите целевое соревнование",
         help_text="Соревнования, куда отбираем спортсмена"
     )
-    
+
     # НЕСКОЛЬКО исторических соревнований
     history_competitions = forms.ModelMultipleChoiceField(
         label="📋 Исторические соревнования",
@@ -113,7 +113,112 @@ class CompetitionSelectionForm(forms.Form):
         }),
         help_text="Выберите соревнования, откуда брать результаты (можно несколько)"
     )
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Исключаем целевое из исторических (визуально разделим в шаблоне)
+
+
+class AthleteResultForm(forms.Form):
+    """
+    Форма для добавления нового спортсмена и его результата одновременно.
+    Данные сохраняются в ДВЕ таблицы БД: Athlete и Result.
+    """
+    # === Поля для Спортсмена (таблица Athlete) ===
+    athlete_full_name = forms.CharField(
+        label='ФИО Спортсмена',
+        max_length=150,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Иванов Иван Иванович'
+        }),
+        help_text="Введите Фамилию Имя Отчество"
+    )
+
+    athlete_birth_year = forms.IntegerField(
+        label='Год рождения',
+        required=True,
+        min_value=1950,
+        max_value=2025,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'placeholder': '2000'
+        })
+    )
+
+    athlete_team = forms.CharField(
+        label='Команда/Регион',
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'г. Москва, Динамо'
+        })
+    )
+
+    # === Поля для Результата (таблица Result) ===
+    competition = forms.ModelChoiceField(
+        label='Соревнования',
+        queryset=Competition.objects.all().order_by('-date'),
+        required=True,
+        widget=forms.Select(attrs={
+            'class': 'form-select'
+        }),
+        empty_label="Выберите соревнование"
+    )
+
+    distance = forms.ModelChoiceField(
+        label='Дистанция',
+        queryset=Distance.objects.all().order_by('name'),
+        required=True,
+        widget=forms.Select(attrs={
+            'class': 'form-select'
+        }),
+        empty_label="Выберите дистанцию"
+    )
+
+    result_time = forms.CharField(
+        label='Время (мм:сс.мс)',
+        max_length=20,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': '00:00.00'
+        }),
+        help_text="Формат: ММ:СС.мс (например, 01:23.45)"
+    )
+
+    points = forms.CharField(
+        label='Очки FINA',
+        required=True,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'min': 0
+        })
+    )
+
+    # === Служебное поле (не хранится в БД) ===
+    agree_rules = forms.BooleanField(
+        label='Я подтверждаю достоверность введённых данных',
+        required=True,
+        widget=forms.CheckboxInput(attrs={
+            'class': 'form-check-input'
+        })
+    )
+
+    def clean_athlete_full_name(self):
+        """Проверка: ФИО должно содержать минимум 2 слова"""
+        name = self.cleaned_data.get('athlete_full_name')
+        if len(name.split()) < 2:
+            raise forms.ValidationError("Введите как минимум Фамилию и Имя.")
+        return name
+
+    def clean_result_time(self):
+        """Проверка формата времени"""
+        time_str = self.cleaned_data.get('result_time')
+        import re
+        pattern = r'^\d{1,2}:\d{2}\.\d{1,2}$'
+        if not re.match(pattern, time_str):
+            raise forms.ValidationError("Время должно быть в формате ММ:СС.мс (например, 01:23.45)")
+        return time_str

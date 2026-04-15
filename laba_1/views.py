@@ -1,5 +1,6 @@
-from django.shortcuts import render
-from .forms import CompetitionForm, AthleteSearchForm, CompetitionSelectionForm
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .forms import CompetitionForm, AthleteSearchForm, CompetitionSelectionForm, AthleteResultForm
 from .models import Athlete, Result, Competition, Distance
 from django.db.models import Q
 from laba_1.core.utils import get_points_by_place, parse_time_to_seconds, calculate_rank_for_result
@@ -213,3 +214,59 @@ def athlete_points_calculation(request):
     }
 
     return render(request, 'athlete_points.html', context)
+
+
+def add_member(request):
+    """
+    Страница добавления нового спортсмена и его результата.
+    Данные сохраняются в ДВЕ таблицы БД: Athlete и Result.
+    """
+    form = AthleteResultForm()
+    recent_athletes = []
+
+    if request.method == 'POST':
+        form = AthleteResultForm(request.POST)
+
+        if form.is_valid():
+            # === 1. Создаём нового спортсмена (таблица Athlete) ===
+            athlete = Athlete.objects.create(
+                full_name=form.cleaned_data['athlete_full_name'],
+                birth_year=form.cleaned_data['athlete_birth_year'],
+                team=form.cleaned_data.get('athlete_team', '')
+            )
+
+            # === 2. Создаём результат (таблица Result) ===
+            result = Result.objects.create(
+                athlete=athlete,
+                competition=form.cleaned_data['competition'],
+                distance=form.cleaned_data['distance'],
+                result_time=form.cleaned_data['result_time'],
+                points=form.cleaned_data['points']
+            )
+
+            # Сообщение об успехе
+            messages.success(
+                request,
+                f'Спортсмен "{athlete.full_name}" успешно добавлен! '
+                f'Результат: {result.result_time} ({result.points} очков)'
+            )
+
+            # Перенаправляем на эту же страницу (Post/Redirect/Get)
+            return redirect('add_member')
+
+    # Получаем последних 5 добавленных спортсменов для отображения
+    recent_athletes_qs = Athlete.objects.all().order_by('-id')[:5]
+    recent_athletes = []
+    for athlete in recent_athletes_qs:
+        last_result = Result.objects.filter(athlete=athlete).order_by('-id').first()
+        recent_athletes.append({
+            'athlete': athlete,
+            'result': last_result
+        })
+
+    context = {
+        'form': form,
+        'recent_athletes': recent_athletes,
+    }
+
+    return render(request, 'add_member.html', context)
