@@ -10,7 +10,7 @@
 <body>
     <div class="container py-5">
         <h1 class="text-center mb-4">Расчет очков спортсмена</h1>
-        
+
         <!-- Сообщение об ошибке -->
         {% if error_message %}
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -18,11 +18,11 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
         {% endif %}
-        
+
         <!-- ОДНА форма для пользователя (объединяет обе формы Django) -->
         <form method="post">
             {% csrf_token %}
-            
+
             <!-- Секция 1: Поиск спортсмена -->
             <div class="form-section">
                 <div class="row">
@@ -49,7 +49,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Секция 2: Выбор соревнований -->
             <div class="form-section">
                 <div class="row">
@@ -65,11 +65,18 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">{{ selection_form.history_competitions.label }}</label>
-                        <div class="overflow-auto" style="max-height: none;">
-                            {{ selection_form.history_competitions }}
+                        <div class="history-competitions-container">
+                            <div class="history-competitions-list">
+                                {% for checkbox in selection_form.history_competitions %}
+                                    <label>
+                                        {{ checkbox.tag }}
+                                        <span>{{ checkbox.choice_label }}</span>
+                                    </label>
+                                {% endfor %}
+                            </div>
                         </div>
                         {% if selection_form.history_competitions.errors %}
-                            <div class="error">{{ selection_form.history_competitions.errors }}</div>
+                            <div class="error mt-2">{{ selection_form.history_competitions.errors }}</div>
                         {% endif %}
                         <small class="text-muted">{{ selection_form.history_competitions.help_text }}</small>
                     </div>
@@ -78,7 +85,7 @@
                     <div class="error mt-2">{{ selection_form.non_field_errors }}</div>
                 {% endif %}
             </div>
-            
+
             <!-- Кнопка отправки -->
             <div class="text-center">
                 <button type="submit" class="btn btn-primary btn-lg">
@@ -86,9 +93,9 @@
                 </button>
             </div>
         </form>
-        
+
         <hr>
-        
+
         <!-- Результаты (показываем только после отправки формы) -->
         {% if athlete %}
         <div class="card">
@@ -123,7 +130,7 @@
                             </tbody>
                         </table>
                     </div>
-                    
+
                     <div class="alert alert-success mt-4">
                         <h5 class="alert-heading">🏆 Итого очков:</h5>
                         <p class="mb-0">
@@ -131,7 +138,7 @@
                             <small class="text-muted">(топ-3 лучшие дистанции)</small>
                         </p>
                     </div>
-                    
+
                 {% else %}
                     <div class="alert alert-warning">
                         У спортсмена нет результатов в выбранных соревнованиях
@@ -140,9 +147,9 @@
             </div>
         </div>
         {% endif %}
-        
+
     </div>
-    
+
     <script>
         // Простой скрипт для закрытия alert
         document.querySelectorAll('.btn-close').forEach(function(btn) {

@@ -97,11 +97,11 @@ def athlete_points_calculation(request):
                 # 6. Считаем общее количество очков (топ-3 дистанции)
                 sorted_by_points = sorted(
                     best_results_by_distance.values(),
-                    key=lambda x: x.points,
+                    key=lambda x: float(x.points) if x.points else 0,
                     reverse=True
                 )[:3]  # Берём топ-3
                 
-                total_points = sum(r.points for r in sorted_by_points)
+                total_points = sum(float(r.points) if r.points else 0 for r in sorted_by_points)
                 
             else:
                 error_message = f"Спортсмен с именем '{athlete_name}' не найден в базе"
