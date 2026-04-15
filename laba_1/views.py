@@ -2,7 +2,7 @@ from django.shortcuts import render
 from .forms import CompetitionForm, AthleteSearchForm, CompetitionSelectionForm
 from .models import Athlete, Result, Competition, Distance
 from django.db.models import Q
-from laba_1.core.utils import get_points_by_place, parse_time_to_seconds
+from laba_1.core.utils import get_points_by_place, parse_time_to_seconds, calculate_rank_for_result
 
 
 def competition_registration(request):
@@ -153,12 +153,16 @@ def athlete_points_calculation(request):
                     else:
                         calculated_points = 0
 
+                    # Рассчитываем разряд на основе времени и дистанции
+                    calculated_rank = calculate_rank_for_result(r.distance, r.result_time)
+
                     # Добавляем результат в список всех рассчитанных результатов
                     all_calculated_results.append({
                         'result': r,
                         'points': calculated_points,
                         'predicted_place': predicted_place,
-                        'athlete_time_sec': athlete_time_sec
+                        'athlete_time_sec': athlete_time_sec,
+                        'calculated_rank': calculated_rank
                     })
 
                     # Сохраняем лучший результат по дистанции для подсчета топ-3

@@ -125,7 +125,7 @@
                                     <td>{{ item.result.competition.name }}</td>
                                     <td>{{ item.result.distance }}</td>
                                     <td><strong>{{ item.result.result_time }}</strong></td>
-                                    <td>{{ item.result.rank|default:"-" }}</td>
+                                    <td>{{ item.calculated_rank|default:"-" }}</td>
                                     <td>{{ item.predicted_place|default:"-" }}</td>
                                     <td><span class="badge bg-success">{{ item.points }}</span></td>
                                 </tr>

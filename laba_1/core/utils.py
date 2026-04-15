@@ -37,12 +37,12 @@ def normalize_event_name(title: str) -> str:
     """Главная функция нормализации."""
     # 1. Очистка от мусора
     clean_title = clean_raw_text(title)
-    
+
     # 2. Извлечение компонентов
     sport = normalize_sport_type(clean_title)
     distance = normalize_distance(clean_title)
     category = normalize_category(clean_title)
-    
+
     # 3. Сборка итоговой строки
     # Формат: Вид спорта - Дистанция Категория
     return f"{sport} - {distance} {category}"
@@ -60,8 +60,8 @@ def is_event_header(line):
     ]
         if any(header in line_lower for header in document_headers):
             return False
-        
-        # Ищем строки, содержащие тип дистанции и возрастную категорию  
+
+        # Ищем строки, содержащие тип дистанции и возрастную категорию
         keywords = ['плавание', 'ныряние', 'подводное', 'классическ', 'ласт',]
         age_groups = ['юниоры', 'юниорки', 'юноши', 'девушки', 'мужчины', 'женщины', 'мальчики', 'девочки']
 
@@ -72,7 +72,7 @@ def is_event_header(line):
         has_distance = any(d in line_lower for d in distances)
 
         return has_keyword and has_age and (has_distance or 'эстафета' in line_lower)
-    
+
 def is_athlete_row(parts):
         NON_ATHLETE_KEYWORDS = [
     'протокол', 'технических', 'результатов', 'место', 'разряд',
@@ -88,33 +88,33 @@ def is_athlete_row(parts):
 ]
         if not parts:
             return False
-        
+
         # Объединяем первые несколько частей для проверки
         text_check_start = ' '.join(parts[:min(5, len(parts))]).lower()
         # Объединяем последние несколько частей для проверки
         text_check_end = ' '.join(parts[-5:]).lower()
 
-        
+
         # Проверка на наличие ключевых слов не-спортсмена
         for keyword in NON_ATHLETE_KEYWORDS:
             if keyword in text_check_start or keyword in text_check_end:
                 return False
-        
+
         # Проверка на дату в формате "26 февраля-01 марта 2025 г."
         date_pattern = r'\d{1,2}\s*(января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря)'
         import re
         if re.search(date_pattern, text_check_start, re.IGNORECASE):
             return False
-                
+
         return True
 
 def normalize_line(line):
             # 1. Добавляем пробелы между временем и разрядом: "59,03III" -> "59,03 III"
             line = re.sub(r'(\d{1,2}[,.:]\d{2}(?:[,.:]\d{2})?)([IКМСб\\/юн])', r'\1 \2', line)
-            
+
             # 2. Добавляем пробелы между разрядом и "юн": "IIIюн" -> "III юн"
             line = re.sub(r'([I]{1,3}|[1-3])(юн)', r'\1 \2', line)
-            
+
             # 3. Обрабатываем сложные случаи: "59,03IIIюн" -> "59,03 III юн"
             line = re.sub(r'(\d{1,2}[,.:]\d{2}(?:[,.:]\d{2})?)([I]{1,3}|[1-3])(юн)', r'\1 \2 \3', line)
             return line
@@ -127,10 +127,10 @@ def get_best_time(*results):
         sec = parse_time_to_seconds(r)
         if sec is not None:
             valid_pairs.append((sec, r))
-    
+
     if not valid_pairs:
         return None
-    
+
     # Находим минимальное по секундам и возвращаем исходную строку
     best_sec, best_str = valid_pairs[0]
     for sec, s in valid_pairs[1:]:
@@ -153,7 +153,7 @@ def clean_raw_text(text: str) -> str:
 def normalize_sport_type(title: str) -> str:
     """Определяет и нормализует название вида спорта."""
     title_lower = title.lower()
-    
+
     if "ныряние" in title_lower:
         return "Подводное плавание"
     elif "классическ" in title_lower:
@@ -164,14 +164,14 @@ def normalize_sport_type(title: str) -> str:
         return "Плавание в ластах"
     elif "плавание" in title_lower:
         # Если просто плавание без упоминания ласт, но в контексте подводного спорта
-        return "Плавание в ластах" 
+        return "Плавание в ластах"
     else:
         return "Дисциплина"
-    
+
 def normalize_category(title: str) -> str:
     """ Приводит 6 возрастных категорий к единому стандарту."""
     title_lower = title.lower()
-    
+
     # Женские категории
     if "юниорк" in title_lower: # юниорки
         return "Женщины"
@@ -179,7 +179,7 @@ def normalize_category(title: str) -> str:
         return "Женщины"
     if "Женщины" in title_lower or "жен " in title_lower or title_lower.endswith("жен"):
         return "Женщины"
-        
+
     # Мужские категории
     if "юниор" in title_lower: # юниоры (проверяем после юниорок)
         return "Мужчины"
@@ -187,7 +187,7 @@ def normalize_category(title: str) -> str:
         return "Мужчины"
     if "мужчин" in title_lower or "муж " in title_lower or title_lower.endswith("муж"):
         return "Мужчины"
-    
+
     return "Женщины" # Если категория не найдена
 
 def normalize_distance(title: str) -> str:
@@ -196,12 +196,12 @@ def normalize_distance(title: str) -> str:
     relay_match = re.search(r'4\s*[хx]\s*(\d+)', title)
     if relay_match:
         return f"4х{relay_match.group(1)} м"
-    
+
     # Ищем обычные дистанции 50, 100, 200...
     dist_match = re.search(r'(\d+)\s*(?:м|метров|м\.)', title)
     if dist_match:
         return f"{dist_match.group(1)} м"
-        
+
     return None
 
 def is_relay_event(event_name: str) -> bool:
@@ -210,9 +210,9 @@ def is_relay_event(event_name: str) -> bool:
     """
     if not event_name:
         return False
-    
+
     event_lower = event_name.lower()
-    
+
     # Признаки эстафеты
     relay_indicators = [
         'эстафет',
@@ -221,8 +221,93 @@ def is_relay_event(event_name: str) -> bool:
         '4 x',          # 4 x 100
         '4 х',          # 4 х 100
     ]
-    
+
     return any(indicator in event_lower for indicator in relay_indicators)
+
+
+def get_discipline_from_event_name(event_name: str) -> str:
+    """
+    Определяет тип дисциплины для функции get_rank на основе названия события.
+
+    Возвращает:
+        'ласты' - плавание в ластах
+        'классика' - плавание в классических ластах
+        'подводное' - подводное плавание (включая ныряние)
+    """
+    if not event_name:
+        return 'ласты'
+
+    event_lower = event_name.lower()
+
+    if "классическ" in event_lower:
+        return 'классика'
+    elif "ныряние" in event_lower or "подводное" in event_lower:
+        return 'подводное'
+    elif "плавание" in event_lower and "ласт" in event_lower:
+        return 'ласты'
+    elif "плавание" in event_lower:
+        return 'ласты'
+    else:
+        return 'ласты'
+
+
+def calculate_rank_for_result(distance_obj, time_str: str) -> str:
+    """
+    Рассчитывает разряд спортсмена на основе дистанции и времени.
+
+    Args:
+        distance_obj: Объект Distance с полями gender, name, distance_meters
+        time_str: Время в формате строки (например: "00:16,46" или "1.22.5")
+
+    Returns:
+        Строка с разрядом (например: "МС", "КМС", "1", "2 юн" и т.д.)
+        или пустая строка если не удалось определить.
+    """
+    from .utils import parse_time_to_seconds, get_rank, get_discipline_from_event_name
+
+    if not distance_obj or not time_str:
+        return ""
+
+    # Парсим время
+    seconds = parse_time_to_seconds(time_str)
+    if seconds is None:
+        return ""
+
+    # Определяем пол
+    gender_map = {'M': 'мужчины', 'F': 'женщины', 'X': 'мужчины'}
+    gender = gender_map.get(distance_obj.gender, 'мужчины')
+
+    # Определяем дисциплину
+    discipline = get_discipline_from_event_name(distance_obj.name)
+
+    # Получаем дистанцию в метрах
+    distance_meters = distance_obj.distance_meters
+
+    # Рассчитываем разряд
+    rank = get_rank(gender, discipline, distance_meters, seconds)
+
+    return rank
+
+
+# Экспортируем новые функции
+__all__ = [
+    'parse_time_to_seconds',
+    'format_time',
+    'get_points_by_place',
+    'normalize_event_name',
+    'is_event_header',
+    'is_athlete_row',
+    'normalize_line',
+    'get_best_time',
+    'clean_raw_text',
+    'normalize_sport_type',
+    'normalize_category',
+    'normalize_distance',
+    'is_relay_event',
+    'get_discipline_from_event_name',
+    'calculate_rank_for_result',
+    'get_rank',
+]
 
 # def get_relay_leg_distance(event_name: str) -> int | None:
 #     """
@@ -231,12 +316,12 @@ def is_relay_event(event_name: str) -> bool:
 #     """
 #     if not event_name:
 #         return None
-    
+
 #     # Ищем паттерн 4x100 или 4х100
 #     match = re.search(r'4\s*[xх]\s*(\d+)', event_name)
 #     if match:
 #         return int(match.group(1))
-    
+
 #     return None
 def get_rank(gender: str, discipline: str, distance: int, time_input) -> str:
     """
@@ -311,7 +396,7 @@ def get_rank(gender: str, discipline: str, distance: int, time_input) -> str:
         return "Неизвестная дисциплина"
 
     if distance not in tables[key]:
-        return "Неизвестная дистанция для этой дисциплины"
+        return "Нет разряда"
 
     norms = tables[key][distance]
     ranks = ["МСМК", "МС", "КМС", "1", "2", "3", "1 юн", "2 юн", "3 юн"]
