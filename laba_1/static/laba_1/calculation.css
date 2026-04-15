@@ -287,12 +287,26 @@ label {
 }
 
 /* Скролл для чекбоксов */
+/* Скролл для чекбоксов */
+/* Скролл для чекбоксов */
 .overflow-auto {
-    max-height: 200px;
-    overflow-y: auto;
+    max-height: none;  /* Убираем ограничение высоты у div */
     border: 1px solid #dee2e6;
     padding: 10px;
     border-radius: 5px;
+}
+
+/* Стили для select внутри overflow-auto */
+.overflow-auto select {
+    min-height: 400px;  /* Высота select */
+    width: 100%;
+    font-size: 14px;
+}
+
+/* Стили для опций внутри select */
+.overflow-auto select option {
+    padding: 10px;
+    font-size: 14px;
 }
 
 /* Сетка */

@@ -1,6 +1,7 @@
 import pdfplumber
+from .base import IParser
 import re
-from laba_1.utils.parsing import (
+from laba_1.core.utils import (
 get_best_time,
 is_athlete_row,
 normalize_line,
@@ -9,7 +10,7 @@ is_event_header,
 is_relay_event
 )
 
-class Goldfins_Parser:
+class Goldfins_Parser(IParser):
     def parse(self, pdf_path, is_manual=True):
         events = []
         current_event = None
@@ -51,15 +52,16 @@ class Goldfins_Parser:
                         continue
 
                     # Парсим строку результата
-                    if current_event and re.match(r'^\d+', line):
+                    if current_event and re.match(r'^\d+', line) and is_relay_event(line_) == False:
                         record = self.parse_result_line_krais(line, is_manual=is_manual)
                         if record:
                             current_event["results"].append(record)
-
+                    else: 
+                        continue
             if current_event:
                 events.append(current_event)
 
-        return events
+        return [event for event in events if not event["relay"]]
 
     def parse_result_line_krais(self, line, is_relay, is_manual=True):
         line = normalize_line(line)

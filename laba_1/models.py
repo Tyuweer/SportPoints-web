@@ -5,7 +5,6 @@ class Competition(models.Model):
     """
     Таблица 1: Соревнования
     Все соревнования хранятся одинаково.
-    Тип (целевое/историческое) определяется пользователем при расчете.
     """
     
     name = models.CharField(
@@ -194,18 +193,18 @@ class Result(models.Model):
         blank=True,
         help_text="На какой норматив проплыл"
     )
-    points = models.IntegerField(
+    points = models.CharField(
         "Очки",
         default=0,
         help_text="Количество очков за этот результат"
     )
     
-    # Дополнительные флаги
-    is_relay = models.BooleanField(
-        "Эстафета",
-        default=False,
-        help_text="Эстафетный заплыв"
-    )
+    # # Дополнительные флаги
+    # is_relay = models.BooleanField(
+    #     "Эстафета",
+    #     default=False,
+    #     help_text="Эстафетный заплыв"
+    # )
     is_manual_timing = models.BooleanField(
         "Ручной хронометраж",
         default=False,

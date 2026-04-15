@@ -1,6 +1,6 @@
-from utils.parsing import parse_time_to_seconds, get_points_by_place, normalize_event_name
-from utils.parsing import normalize_category
-from utils.parsing import is_relay_event
+from laba_1.core.utils import parse_time_to_seconds, get_points_by_place, normalize_event_name
+from laba_1.core.utils import normalize_category
+from laba_1.core.utils import is_relay_event
 
 def load_target_events(target_json_data):
     events = {}

@@ -65,7 +65,7 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">{{ selection_form.history_competitions.label }}</label>
-                        <div class="overflow-auto">
+                        <div class="overflow-auto" style="max-height: none;">
                             {{ selection_form.history_competitions }}
                         </div>
                         {% if selection_form.history_competitions.errors %}

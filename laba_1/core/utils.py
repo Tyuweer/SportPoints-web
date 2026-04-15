@@ -155,7 +155,7 @@ def normalize_sport_type(title: str) -> str:
     title_lower = title.lower()
     
     if "ныряние" in title_lower:
-        return "Ныряние"
+        return "Подводное плавание"
     elif "классическ" in title_lower:
         return "Плавание в классических ластах"
     elif "подводное" in title_lower:
@@ -202,7 +202,7 @@ def normalize_distance(title: str) -> str:
     if dist_match:
         return f"{dist_match.group(1)} м"
         
-    return "0 м"
+    return None
 
 def is_relay_event(event_name: str) -> bool:
     """

@@ -1,7 +1,7 @@
 import pdfplumber
+from .base import IParser
 import re
-from .base import IParser 
-from laba_1.utils.parsing import (
+from  laba_1.core.utils import (
 get_best_time,
 is_athlete_row,
 normalize_line,
@@ -41,6 +41,7 @@ class KubokRossii_Parser(IParser):
                         line_ = normalize_event_name(line)
                         # if line_ in seen_events:
                         #     continue
+                        
                         if current_event:
                             events.append(current_event)
                         current_event = {
@@ -52,17 +53,17 @@ class KubokRossii_Parser(IParser):
                         continue
 
                     # Парсим строку результата
-                    if current_event and re.match(r'^\d+', line):
-                        record = self.parse_result_line_krais(line, current_event['relay'], is_manual=is_manual,)
+                    if current_event and re.match(r'^\d+', line) and is_relay_event(line_) == False:
+                        record = self.parse_result_line_krais(line, is_manual=is_manual,)
                         if record:
                             current_event["results"].append(record)
-
+                    else: 
+                        continue
             if current_event:
                 events.append(current_event)
+        return [event for event in events if not event["relay"]]
 
-        return events
-
-    def parse_result_line_krais(self, line, is_relay, is_manual=True,):
+    def parse_result_line_krais(self, line, is_manual=True,):
         line = normalize_line(line)
         parts = line.split()
 
@@ -231,7 +232,7 @@ class KubokRossii_Parser(IParser):
                     i += 1
                     continue
                 if p == 'лично' or p == 'Лично' or p == 'ЛИЧНО':
-                    points = 0
+                    points = p
                     i += 1
                     continue
             
@@ -254,7 +255,6 @@ class KubokRossii_Parser(IParser):
                 "best_Result": best_result, 
                 "normative": normative,
                 "points": points,
-                "relay": is_relay,
                 "is_manual_timing": is_manual
             }
 
