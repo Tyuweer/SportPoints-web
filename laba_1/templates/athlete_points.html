@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Расчет очков спортсмена</title>
     {% load static %}
+    {% load points_filters %}
     <link rel="stylesheet" href="{% static 'laba_1/calculation.css' %}">
 </head>
 <body>
@@ -104,7 +105,9 @@
             </div>
             <div class="card-body">
                 {% if results %}
-                    <div class="table-responsive">
+                    <!-- Таблица всех результатов по дистанциям -->
+                    <h5 class="mb-3">📋 Все дистанции с очками</h5>
+                    <div class="table-responsive mb-4">
                         <table class="table table-hover">
                             <thead>
                                 <tr>
@@ -113,7 +116,7 @@
                                     <th>Место</th>
                                     <th>Результат</th>
                                     <th>Разряд</th>
-                                    <th>Очки</th>
+                                    <th>Очки по месту</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -124,20 +127,46 @@
                                     <td>{{ result.place|default:"-" }}</td>
                                     <td><strong>{{ result.result_time }}</strong></td>
                                     <td>{{ result.rank|default:"-" }}</td>
-                                    <td><span class="badge bg-success">{{ result.points }}</span></td>
+                                    <td><span class="badge bg-success">{{ result.place|default:0|points_by_place }}</span></td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
                     </div>
 
-                    <div class="alert alert-success mt-4">
-                        <h5 class="alert-heading">🏆 Итого очков:</h5>
-                        <p class="mb-0">
-                            <span class="points-badge">{{ total_points }} очков</span>
-                            <small class="text-muted">(топ-3 лучшие дистанции)</small>
-                        </p>
-                    </div>
+                    < <!-- Топ-3 лучших дистанции по сумме очков -->
+                    <h5 class="mb-3">🏆 Топ-3 лучшие дистанции по сумме очков</h5>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Дистанция</th>
+                                    <th>Лучший результат</th>
+                                    <th>Место</th>
+                                    <th>Очки</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in best_results_by_distance.values|dictsortreversed:"points"|slice:":3" %}
+                                <tr>
+                                    <td><strong>{{ item.result.distance }}</strong></td>
+                                    <td>{{ item.result.result_time }}</td>
+                                    <td>{{ item.result.place|default:"-" }}</td>
+                                    <td><span class="badge bg-warning text-dark fs-6">{{ item.points }}</span></td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center">Нет данных</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot class="table-dark">
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Итого очков:</strong></td>
+                                    <td><span class="badge bg-success fs-5">{{ total_points }}</span></td>
+                                </tr>
+                            </tfoot>
+                        </table>
 
                 {% else %}
                     <div class="alert alert-warning">

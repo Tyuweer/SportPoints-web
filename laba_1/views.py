@@ -2,6 +2,8 @@ from django.shortcuts import render
 from .forms import CompetitionForm, AthleteSearchForm, CompetitionSelectionForm
 from .models import Athlete, Result, Competition
 from django.db.models import Q
+from laba_1.core.utils import get_points_by_place
+
 
 def competition_registration(request):
     form = CompetitionForm()
@@ -87,21 +89,30 @@ def athlete_points_calculation(request):
                 best_results_by_distance = {}
                 for r in results:
                     dist_name = str(r.distance)
+                    # Пересчитываем очки на основе места
+                    calculated_points = get_points_by_place(r.place) if r.place else 0
+
                     if dist_name not in best_results_by_distance:
-                        best_results_by_distance[dist_name] = r
+                        best_results_by_distance[dist_name] = {
+                            'result': r,
+                            'points': calculated_points
+                        }
                     else:
                         # Берём результат с большим количеством очков
-                        if r.points > best_results_by_distance[dist_name].points:
-                            best_results_by_distance[dist_name] = r
+                        if calculated_points > best_results_by_distance[dist_name]['points']:
+                            best_results_by_distance[dist_name] = {
+                                'result': r,
+                                'points': calculated_points
+                            }
                 
                 # 6. Считаем общее количество очков (топ-3 дистанции)
                 sorted_by_points = sorted(
                     best_results_by_distance.values(),
-                    key=lambda x: float(x.points) if x.points else 0,
+                    key=lambda x: x['points'],
                     reverse=True
                 )[:3]  # Берём топ-3
                 
-                total_points = sum(float(r.points) if r.points else 0 for r in sorted_by_points)
+                total_points = sum(item['points'] for item in sorted_by_points)
                 
             else:
                 error_message = f"Спортсмен с именем '{athlete_name}' не найден в базе"
@@ -116,6 +127,7 @@ def athlete_points_calculation(request):
         'results': results,
         'total_points': total_points,
         'error_message': error_message,
+        'best_results_by_distance': best_results_by_distance if 'best_results_by_distance' in locals() else {},
     }
     
     return render(request, 'athlete_points.html', context)

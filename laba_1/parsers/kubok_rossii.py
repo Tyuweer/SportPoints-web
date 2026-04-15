@@ -1,13 +1,15 @@
 import pdfplumber
 from .base import IParser
 import re
-from  laba_1.core.utils import (
+from laba_1.core.utils import (
 get_best_time,
 is_athlete_row,
 normalize_line,
 normalize_event_name,
 is_event_header,
-is_relay_event
+is_relay_event,
+parse_time_to_seconds,
+format_time
 )
 
 class KubokRossii_Parser(IParser):
@@ -189,6 +191,22 @@ class KubokRossii_Parser(IParser):
             else: 
                 best_result = result
 
+            # Применяем коррекцию времени для ручного хронометража (+0.2 сек)
+            if is_manual and best_result:
+                best_sec = parse_time_to_seconds(best_result)
+                if best_sec is not None:
+                    best_sec += 0.20
+                    best_result = format_time(best_sec)
+                    # Также корректируем result и final_result если они есть
+                    if result:
+                        result_sec = parse_time_to_seconds(result)
+                        if result_sec is not None:
+                            result = format_time(result_sec + 0.20)
+                    if final_result:
+                        final_sec = parse_time_to_seconds(final_result)
+                        if final_sec is not None:
+                            final_result = format_time(final_sec + 0.20)
+                            
             # Остальное — норматив, очки
             normative = None
             points = None

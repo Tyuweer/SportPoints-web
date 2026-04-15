@@ -7,7 +7,9 @@ is_athlete_row,
 normalize_line,
 normalize_event_name,
 is_event_header,
-is_relay_event
+is_relay_event,
+parse_time_to_seconds,
+format_time
 )
 
 class Goldfins_Parser(IParser):
@@ -208,6 +210,30 @@ class Goldfins_Parser(IParser):
                 best_result = get_best_time(result1, result2)
             else: 
                 best_result = result1
+            
+            # Применяем коррекцию времени для ручного хронометража (+0.2 сек)
+            if is_manual and best_result:
+                best_sec = parse_time_to_seconds(best_result)
+                if best_sec is not None:
+                    best_sec += 0.20
+                    best_result = format_time(best_sec)
+                    # Также корректируем result1, result2, result3 и final_result если они есть
+                    if result1:
+                        result1_sec = parse_time_to_seconds(result1)
+                        if result1_sec is not None:
+                            result1 = format_time(result1_sec + 0.20)
+                    if result2:
+                        result2_sec = parse_time_to_seconds(result2)
+                        if result2_sec is not None:
+                            result2 = format_time(result2_sec + 0.20)
+                    if result3:
+                        result3_sec = parse_time_to_seconds(result3)
+                        if result3_sec is not None:
+                            result3 = format_time(result3_sec + 0.20)
+                    if final_result:
+                        final_sec = parse_time_to_seconds(final_result)
+                        if final_sec is not None:
+                            final_result = format_time(final_sec + 0.20)
 
             # Остальное — норматив, очки
             normative = None
