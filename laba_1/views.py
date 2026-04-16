@@ -58,9 +58,7 @@ def athlete_points_calculation(request):
             history_competitions = selection_form.cleaned_data['history_competitions']
 
             
-            athletes = Athlete.objects.filter(
-                Q(full_name__icontains=athlete_name)
-            ).order_by('full_name')
+            athletes = Athlete.objects.filter(full_name__icontains=athlete_name).order_by('full_name')
 
             if athletes.exists():
                 athlete = athletes.first()

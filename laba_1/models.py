@@ -15,8 +15,8 @@ class Competition(models.Model):
     protocol_file = models.FileField(
         "Протокол PDF",
         upload_to='protocols/',
-        blank=False,
-        null=False,
+        blank=True,
+        null=True,
 
     )
     uploaded_at = models.DateTimeField(

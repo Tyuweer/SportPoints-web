@@ -16,8 +16,8 @@ class Command(BaseCommand):
 
 
     def add_arguments(self, parser):
-        parser.add_argument('competition_id', type=int, required=True)
-        parser.add_argument('--parser-type', type=str, required=True)
+        parser.add_argument('competition_id', type=int,)
+        parser.add_argument('--parser-type', type=str,)
         parser.add_argument('--manual', action='store_true')
 
     def handle(self, *args, **options):

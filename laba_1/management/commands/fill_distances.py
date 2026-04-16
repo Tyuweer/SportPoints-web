@@ -15,13 +15,13 @@ class Command(BaseCommand):
         
         for meters in swimming_distances:
             distances_data.append({
-                'name': f'Плавание в ластах - {meters}',
+                'name': f'Плавание в ластах - {meters} м',
                 'gender': 'M',
                 'meters': meters,
                 'relay': False
             })
             distances_data.append({
-                'name': f'Плавание в ластах - {meters}',
+                'name': f'Плавание в ластах - {meters} м',
                 'gender': 'F',
                 'meters': meters,
                 'relay': False
@@ -31,13 +31,13 @@ class Command(BaseCommand):
         
         for meters in classic_distances:
             distances_data.append({
-                'name': f'Плавание в классических ластах - {meters}',
+                'name': f'Плавание в классических ластах - {meters} м',
                 'gender': 'M',
                 'meters': meters,
                 'relay': False
             })
             distances_data.append({
-                'name': f'Плавание в классических ластах - {meters}',
+                'name': f'Плавание в классических ластах - {meters} м',
                 'gender': 'F',
                 'meters': meters,
                 'relay': False
@@ -47,20 +47,20 @@ class Command(BaseCommand):
         
         for meters in underwater_distances:
             distances_data.append({
-                'name': f'Подводное плавание - {meters}',
+                'name': f'Подводное плавание - {meters} м',
                 'gender': 'M',
                 'meters': meters,
                 'relay': False
             })
             distances_data.append({
-                'name': f'Подводное плавание - {meters}',
+                'name': f'Подводное плавание - {meters} м',
                 'gender': 'F',
                 'meters': meters,
                 'relay': False
             })
         
         relay_distances = [
-            {'name': 'Плавание в ластах - 4x100', 'meters': 400},
+            {'name': 'Плавание в ластах - 4x100', 'meters': 400 },
             {'name': 'Плавание в ластах - 4x200', 'meters': 800},
         ]
         
