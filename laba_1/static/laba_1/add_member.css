@@ -1,0 +1,384 @@
+/* Простой минималистичный дизайн для add_member.html */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 20px;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+    font-size: 24px;
+}
+
+h4, h5 {
+    color: #444;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #ddd;
+    font-size: 18px;
+}
+
+.form-section {
+    background: white;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border: 1px solid #e0e0e0;
+}
+
+.mb-3 {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+    font-size: 14px;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="email"],
+select,
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-size: 14px;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="email"]:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: #666;
+}
+
+.form-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 10px 0;
+}
+
+.form-check input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+}
+
+.form-check-label {
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.text-muted {
+    color: #888;
+    font-size: 12px;
+    display: block;
+    margin-top: 4px;
+}
+
+.text-danger {
+    color: #d9534f;
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.btn {
+    display: inline-block;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 16px;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.btn-primary {
+    background-color: #5a9fd4;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #4a8fc4;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+    margin-top: 20px;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+.btn-success {
+    background-color: #5cb85c;
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: #4cae4c;
+}
+
+.btn-lg {
+    font-size: 18px;
+    padding: 14px 40px;
+}
+
+.success-message {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+    padding: 15px;
+    border-radius: 3px;
+    margin-bottom: 20px;
+}
+
+hr {
+    margin: 30px 0;
+    border: none;
+    border-top: 1px solid #ddd;
+}
+
+.card {
+    background: white;
+    border-radius: 5px;
+    border: 1px solid #e0e0e0;
+    margin-top: 20px;
+}
+
+.card-header {
+    background: #5cb85c;
+    color: white;
+    padding: 12px 15px;
+    border-radius: 5px 5px 0 0;
+    font-size: 16px;
+}
+
+.card-body {
+    padding: 15px;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+table thead {
+    background-color: #f8f9fa;
+}
+
+table th,
+table td {
+    border: 1px solid #dee2e6;
+    padding: 10px;
+    text-align: left;
+}
+
+table th {
+    font-weight: bold;
+    color: #333;
+}
+
+table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+table tbody tr:hover {
+    background-color: #f5f5f5;
+}
+
+.badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.bg-primary {
+    background-color: #5a9fd4;
+    color: white;
+}
+
+.bg-success {
+    background-color: #5cb85c;
+    color: white;
+}
+
+.bg-warning {
+    background-color: #f0ad4e;
+    color: white;
+}
+
+.text-muted {
+    color: #888;
+}
+
+strong {
+    font-weight: bold;
+}
+
+/* Стили для alert */
+.alert {
+    padding: 15px;
+    border-radius: 3px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+    color: #856404;
+}
+
+.alert-dismissible {
+    position: relative;
+    padding-right: 40px;
+}
+
+.btn-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #000;
+    opacity: 0.5;
+}
+
+.btn-close:hover {
+    opacity: 1;
+}
+
+/* Сетка */
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: -10px;
+}
+
+.col-md-6,
+.col-md-8,
+.col-md-4 {
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.col-md-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+}
+
+.col-md-8 {
+    flex: 0 0 66.666667%;
+    max-width: 66.666667%;
+}
+
+.col-md-4 {
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+}
+
+/* История соревнований */
+.history-competitions-container {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #dee2e6;
+    border-radius: 3px;
+    padding: 10px;
+    background: #fff;
+}
+
+.history-competitions-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 10px;
+}
+
+.history-competitions-list label {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-weight: normal;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 3px;
+}
+
+.history-competitions-list label:hover {
+    background-color: #f0f7f0;
+}
+
+.history-competitions-list input[type="checkbox"] {
+    margin-top: 3px;
+    flex-shrink: 0;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .col-md-6,
+    .col-md-8,
+    .col-md-4 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    .container {
+        padding: 10px;
+    }
+}
+
+.mt-3 {
+    margin-top: 15px;
+}
+
+.mb-4 {
+    margin-bottom: 20px;
+}
+
+.py-5 {
+    padding-top: 30px;
+    padding-bottom: 30px;
+}

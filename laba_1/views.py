@@ -163,7 +163,7 @@ def athlete_points_calculation(request):
                 total_points = sum(item['points'] for item in sorted_by_points)
 
                 best_results_by_distance = distance_best_results
-                all_calculated_results = all_calculated_results
+
 
             else:
                 error_message = f"Спортсмен с именем '{athlete_name}' не найден в базе"
@@ -213,7 +213,6 @@ def add_member(request):
             messages.success(
                 request,
                 f'Спортсмен "{athlete.full_name}" успешно добавлен! '
-                f'Результат: {result.result_time} ({result.points} очков)'
             )
 
             return redirect('add_member')

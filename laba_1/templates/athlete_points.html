@@ -11,31 +11,26 @@
 <body>
     <div class="container py-5">
         <h1 class="text-center mb-4">Расчет очков спортсмена</h1>
-
-        <!-- Сообщение об ошибке -->
         {% if error_message %}
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            ⚠️ {{ error_message }}
+            {{ error_message }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
         {% endif %}
 
-        <!-- ОДНА форма для пользователя (объединяет обе формы Django) -->
         <form method="post">
             {% csrf_token %}
-
-            <!-- Секция 1: Поиск спортсмена -->
             <div class="form-section">
                 <div class="row">
                     <div class="col-md-8">
                         <label for="{{ search_form.athlete_name.id_for_label }}" class="form-label">
                             {{ search_form.athlete_name.label }}
                         </label>
-                        {{ search_form.athlete_name }}
+                        <!-- {{ search_form.athlete_name }} -->
                         {% if search_form.athlete_name.errors %}
                             <div class="error">{{ search_form.athlete_name.errors }}</div>
                         {% endif %}
-                        <small class="text-muted">{{ search_form.athlete_name.help_text }}</small>
+                        <small class="text-muted">{{ search_form.athlete_name }}</small>
                     </div>
                     <div class="col-md-4 d-flex align-items-end">
                         <div class="form-check">
@@ -51,7 +46,7 @@
                 </div>
             </div>
 
-            <!-- Секция 2: Выбор соревнований -->
+
             <div class="form-section">
                 <div class="row">
                     <div class="col-md-6">
@@ -87,7 +82,6 @@
                 {% endif %}
             </div>
 
-            <!-- Кнопка отправки -->
             <div class="text-center">
                 <button type="submit" class="btn btn-primary btn-lg">
                     Рассчитать очки
@@ -95,25 +89,24 @@
             </div>
         </form>
 
-        <!-- Кнопка перехода на страницу добавления спортсмена -->
+
         <div class="text-center mt-3 mb-4">
             <a href="{% url 'add_member' %}" class="btn btn-success btn-lg">
-                ➕ Добавить нового спортсмена и результат
+                Добавить нового спортсмена и результат
             </a>
         </div>
 
         <hr>
 
-        <!-- Результаты (показываем только после отправки формы) -->
+
         {% if athlete %}
         <div class="card">
             <div class="card-header bg-primary">
-                <h4 class="mb-0">📊 Результаты спортсмена: {{ athlete.full_name }}</h4>
+                <h4 class="mb-0">Результаты спортсмена: {{ athlete.full_name }}</h4>
             </div>
             <div class="card-body">
                 {% if all_calculated_results %}
-                    <!-- Таблица всех результатов с расчетными очками по целевому протоколу -->
-                    <h5 class="mb-3">📋 Все дистанции с расчетными очками (по целевому протоколу)</h5>
+                    <h5 class="mb-3">Все дистанции с расчетными очками</h5>
                     <div class="table-responsive mb-4">
                         <table class="table table-hover">
                             <thead>
@@ -141,8 +134,7 @@
                         </table>
                     </div>
 
-                    <!-- Топ-3 лучших дистанции по сумме очков (рассчитанные) -->
-                    <h5 class="mb-3">🏆 Топ-3 лучшие дистанции по сумме очков (расчет по целевому протоколу)</h5>
+                    <h5 class="mb-3">Топ-3 лучшие дистанции по сумме очков</h5>
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered">
                             <thead class="table-dark">
@@ -186,13 +178,5 @@
 
     </div>
 
-    <script>
-        // Простой скрипт для закрытия alert
-        document.querySelectorAll('.btn-close').forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                this.closest('.alert').remove();
-            });
-        });
-    </script>
 </body>
 </html>
