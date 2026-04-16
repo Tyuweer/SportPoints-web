@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ athlete.full_name }} - Подробная информация</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Подробная информация о спортсмене</h1>
+
+        <!-- Основная информация о спортсмене -->
+        <h2>Данные спортсмена</h2>
+        <table border="1" cellpadding="10" cellspacing="0">
+            <tr>
+                <th>ФИО</th>
+                <td>{{ athlete.full_name }}</td>
+            </tr>
+            <tr>
+                <th>Год рождения</th>
+                <td>{{ athlete.birth_year|default:"Не указан" }}</td>
+            </tr>
+            <tr>
+                <th>Команда/Регион</th>
+                <td>{{ athlete.team|default:"Не указана" }}</td>
+            </tr>
+            <tr>
+                <th>Дата добавления</th>
+                <td>{{ athlete.created_at|date:"d.m.Y H:i" }}</td>
+            </tr>
+        </table>
+
+        <!-- Результаты спортсмена -->
+        <h2>Результаты выступлений</h2>
+        {% if results %}
+            <table border="1" cellpadding="10" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>№</th>
+                        <th>Соревнование</th>
+                        <th>Дистанция</th>
+                        <th>Место</th>
+                        <th>Разряд</th>
+                        <th>Результат</th>
+                        <th>Очки</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for result in results %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ result.competition.name }} ({{ result.competition.date|date:"d.m.Y" }})</td>
+                            <td>{{ result.distance }}</td>
+                            <td>{{ result.place|default:"-" }}</td>
+                            <td>{{ result.rank|default:"-" }}</td>
+                            <td>{{ result.result_time|default:"-" }}</td>
+                            <td>{{ result.points|default:"-" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>У спортсмена пока нет зарегистрированных результатов.</p>
+        {% endif %}
+
+        <hr>
+
+        <!-- Навигация -->
+        <p>
+            <a href="{% url 'athlete_edit' athlete.pk %}">Изменить данные спортсмена</a> |
+            <a href="{% url 'athlete_delete' athlete.pk %}" onclick="return confirm('Вы уверены, что хотите удалить этого спортсмена?')">Удалить спортсмена</a> |
+            <a href="{% url 'athlete_list' %}">Вернуться к списку спортсменов</a>
+        </p>
+    </div>
+</body>
+</html>

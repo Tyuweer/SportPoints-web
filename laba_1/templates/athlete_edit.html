@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактирование спортсмена - {{ athlete.full_name }}</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Редактирование данных спортсмена</h1>
+
+        <!-- Сообщения об ошибках формы -->
+        {% if form.errors %}
+            <div class="alert alert-danger">
+                <p>Пожалуйста, исправьте ошибки в форме:</p>
+                {{ form.errors }}
+            </div>
+        {% endif %}
+
+        <!-- Форма редактирования -->
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="form-section">
+                <h3>Данные спортсмена</h3>
+
+                <div class="mb-3">
+                    <label for="{{ form.full_name.id_for_label }}">
+                        {{ form.full_name.label }}
+                    </label>
+                    {{ form.full_name }}
+                    {% if form.full_name.errors %}
+                        <div class="text-danger">{{ form.full_name.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.birth_year.id_for_label }}">
+                        {{ form.birth_year.label }}
+                    </label>
+                    {{ form.birth_year }}
+                    {% if form.birth_year.errors %}
+                        <div class="text-danger">{{ form.birth_year.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.team.id_for_label }}">
+                        {{ form.team.label }}
+                    </label>
+                    {{ form.team }}
+                    {% if form.team.errors %}
+                        <div class="text-danger">{{ form.team.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Кнопки -->
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    Сохранить изменения
+                </button>
+                <a href="{% url 'athlete_detail' athlete.pk %}" class="btn btn-secondary">
+                    Отмена
+                </a>
+            </div>
+        </form>
+
+        <hr>
+
+        <!-- Навигация -->
+        <p>
+            <a href="{% url 'athlete_detail' athlete.pk %}">Вернуться к подробной информации</a> |
+            <a href="{% url 'athlete_list' %}">Вернуться к списку спортсменов</a>
+        </p>
+    </div>
+</body>
+</html>

@@ -98,7 +98,11 @@ class Athlete(models.Model):
     created_at = models.DateTimeField(
         "Дата добавления",
         auto_now_add=True,
-
+    )
+    removed = models.BooleanField(
+        "Удален",
+        default=False,
+        help_text="True если объект удален (мягкое удаление)"
     )
     
     class Meta:

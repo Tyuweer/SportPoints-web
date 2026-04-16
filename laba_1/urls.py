@@ -7,4 +7,10 @@ urlpatterns = [
     path('', views.athlete_points_calculation, name='calculate'),
 
     path('addmember/', views.add_member, name='add_member'),
+    
+    # Страницы для работы со спортсменами (CRUD)
+    path('athletes/', views.athlete_list, name='athlete_list'),
+    path('athletes/<int:pk>/', views.athlete_detail, name='athlete_detail'),
+    path('athletes/<int:pk>/edit/', views.athlete_edit, name='athlete_edit'),
+    path('athletes/<int:pk>/delete/', views.athlete_delete, name='athlete_delete'),
 ]

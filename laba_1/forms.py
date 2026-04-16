@@ -1,6 +1,28 @@
 from django import forms
 from .models import Competition, Athlete, Distance, Result
 
+class AthleteEditForm(forms.ModelForm):
+    """
+    Форма редактирования спортсмена на основе модели
+    """
+    class Meta:
+        model = Athlete
+        fields = ['full_name', 'birth_year', 'team']
+        widgets = {
+            'full_name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Иванов Иван'
+            }),
+            'birth_year': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': '2000'
+            }),
+            'team': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Красноярский край'
+            }),
+        }
+
 class CompetitionForm(forms.Form):
 
 
