@@ -4,7 +4,8 @@ from .forms import CompetitionForm, AthleteSearchForm, CompetitionSelectionForm,
 from .models import Athlete, Result, Competition, Distance
 from django.db.models import Q
 from laba_1.core.utils import get_points_by_place, parse_time_to_seconds, calculate_rank_for_result
-
+from django.shortcuts import render, redirect, get_object_or_404
+from .forms import AthleteForm
 
 def competition_registration(request):
     form = CompetitionForm()
@@ -220,3 +221,44 @@ def add_member(request):
     }
 
     return render(request, 'add_member.html', context)
+
+
+
+# Страница со списком всех спортсменов (Задание 9)
+def athlete_list(request):
+    # Показываем только те записи, где removed=False
+    athletes = Athlete.objects.filter(removed=False).order_by('full_name')
+    return render(request, 'athlete_list.html', {'athletes': athletes})
+
+
+# Страница детального просмотра спортсмена
+def athlete_detail(request, pk):
+    athlete = get_object_or_404(Athlete, pk=pk, removed=False)
+    # Получаем результаты спортсмена
+    results = Result.objects.filter(athlete=athlete).select_related('competition', 'distance')
+    return render(request, 'athlete_detail.html', {'athlete': athlete, 'results': results})
+
+
+# Страница редактирования спортсмена
+def athlete_edit(request, pk):
+    athlete = get_object_or_404(Athlete, pk=pk, removed=False)
+
+    if request.method == 'POST':
+        form = AthleteForm(request.POST, instance=athlete)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f'Данные спортсмена "{athlete.full_name}" успешно обновлены!')
+            return redirect('athlete_detail', pk=athlete.pk)
+    else:
+        form = AthleteForm(instance=athlete)
+
+    return render(request, 'athlete_edit.html', {'form': form, 'athlete': athlete})
+
+
+# Удаление спортсмена (мягкое удаление - установка removed=True)
+def athlete_delete(request, pk):
+    athlete = get_object_or_404(Athlete, pk=pk)
+    athlete.removed = True
+    athlete.save()
+    messages.success(request, f'Спортсмен "{athlete.full_name}" успешно удален!')
+    return redirect('athlete_list')

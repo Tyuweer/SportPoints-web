@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактирование спортсмена</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'laba_1/athlete_edit.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Редактирование спортсмена</h1>
+
+        <nav class="navigation">
+            <a href="{% url 'athlete_list' %}">Назад к списку</a> |
+            <a href="{% url 'athlete_detail' athlete.pk %}">Просмотр</a>
+        </nav>
+
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="message {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="form-container">
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="{{ form.full_name.id_for_label }}">ФИО спортсмена:</label>
+                    {{ form.full_name }}
+                    {% if form.full_name.errors %}
+                    <div class="error">{{ form.full_name.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.birth_year.id_for_label }}">Год рождения:</label>
+                    {{ form.birth_year }}
+                    {% if form.birth_year.errors %}
+                    <div class="error">{{ form.birth_year.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.team.id_for_label }}">Команда/Регион:</label>
+                    {{ form.team }}
+                    {% if form.team.errors %}
+                    <div class="error">{{ form.team.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-save">Сохранить изменения</button>
+                    <a href="{% url 'athlete_detail' athlete.pk %}" class="btn-cancel">Отмена</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список спортсменов</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'laba_1/athlete_list.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Список спортсменов</h1>
+
+        <nav class="navigation">
+            <a href="{% url 'add_member' %}">Добавить спортсмена</a> |
+            <a href="{% url 'calculate' %}">Расчет очков</a> |
+            <a href="{% url 'register' %}">Регистрация</a>
+        </nav>
+
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="message {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if athletes %}
+        <table class="athlete-table">
+            <thead>
+                <tr>
+                    <th>№</th>
+                    <th>ФИО</th>
+                    <th>Год рождения</th>
+                    <th>Команда/Регион</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for athlete in athletes %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ athlete.full_name }}</td>
+                    <td>{{ athlete.birth_year|default:"-" }}</td>
+                    <td>{{ athlete.team|default:"-" }}</td>
+                    <td class="actions">
+                        <a href="{% url 'athlete_detail' athlete.pk %}" class="btn-detail">Подробнее</a>
+                        <a href="{% url 'athlete_edit' athlete.pk %}" class="btn-edit">Изменить</a>
+                        <a href="{% url 'athlete_delete' athlete.pk %}" class="btn-delete" onclick="return confirm('Вы уверены, что хотите удалить этого спортсмена?')">Удалить</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="no-data">Список спортсменов пуст.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

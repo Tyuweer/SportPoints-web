@@ -98,9 +98,12 @@ class Athlete(models.Model):
     created_at = models.DateTimeField(
         "Дата добавления",
         auto_now_add=True,
-
     )
-    
+    removed = models.BooleanField(
+        "Удалено",
+        default=False,
+        help_text="True если запись удалена"
+    )
     class Meta:
         ordering = ['full_name']
         unique_together = ['full_name', 'birth_year']
