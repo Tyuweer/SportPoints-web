@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Регистрация на соревнование{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="h2">
+                <i class="fas fa-clipboard-check"></i> Регистрация на соревнование
+            </h1>
+        </div>
+    </div>
+
+    {% if messages %}
+    <div class="row mb-3">
+        <div class="col-lg-8">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if submitted_data %}
+    <!-- Success Message -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle"></i> <strong>Данные успешно отправлены!</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Submitted Data Table -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="fas fa-file-check"></i> Отправленные данные</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered mb-0">
+                        <tbody>
+                            <tr>
+                                <th width="30%"><i class="fas fa-user"></i> ФИО</th>
+                                <td>{{ submitted_data.full_name }}</td>
+                            </tr>
+                            <tr>
+                                <th><i class="fas fa-envelope"></i> Email</th>
+                                <td>{{ submitted_data.email }}</td>
+                            </tr>
+                            <tr>
+                                <th><i class="fas fa-map-marker-alt"></i> Регион</th>
+                                <td>{{ submitted_data.region }}</td>
+                            </tr>
+                            <tr>
+                                <th><i class="fas fa-check"></i> Согласие на обработку данных</th>
+                                <td>
+                                    {% if submitted_data.agree_pd %}
+                                    <span class="badge bg-success"><i class="fas fa-check"></i> Дано</span>
+                                    {% else %}
+                                    <span class="badge bg-danger"><i class="fas fa-times"></i> Не дано</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer bg-light">
+                    <a href="{% url 'competition_list' %}" class="btn btn-primary">
+                        <i class="fas fa-list"></i> Вернуться к соревнованиям
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    <!-- Registration Form -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label for="full_name" class="form-label">
+                                <i class="fas fa-user"></i> ФИО участника <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control {% if form.full_name.errors %}is-invalid{% endif %}" 
+                                   id="full_name" name="full_name" 
+                                   placeholder="Иванов Иван Иванович"
+                                   value="{{ form.full_name.value|default:'' }}" required>
+                            {% if form.full_name.errors %}
+                            <div class="invalid-feedback">{{ form.full_name.errors|first }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">
+                                <i class="fas fa-envelope"></i> Электронная почта <span class="text-danger">*</span>
+                            </label>
+                            <input type="email" class="form-control {% if form.email.errors %}is-invalid{% endif %}" 
+                                   id="email" name="email" 
+                                   placeholder="example@mail.ru"
+                                   value="{{ form.email.value|default:'' }}" required>
+                            {% if form.email.errors %}
+                            <div class="invalid-feedback">{{ form.email.errors|first }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="region" class="form-label">
+                                <i class="fas fa-map-marker-alt"></i> Регион <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select {% if form.region.errors %}is-invalid{% endif %}" 
+                                    id="region" name="region" required>
+                                <option value="">-- Выберите регион --</option>
+                                <option value="Moscow" {% if form.region.value == 'Moscow' %}selected{% endif %}>Москва</option>
+                                <option value="SPB" {% if form.region.value == 'SPB' %}selected{% endif %}>Санкт-Петербург</option>
+                                <option value="other" {% if form.region.value == 'other' %}selected{% endif %}>Другой</option>
+                            </select>
+                            {% if form.region.errors %}
+                            <div class="invalid-feedback">{{ form.region.errors|first }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input {% if form.agree_pd.errors %}is-invalid{% endif %}" 
+                                   id="agree_pd" name="agree_pd" 
+                                   {% if form.agree_pd.value %}checked{% endif %} required>
+                            <label class="form-check-label" for="agree_pd">
+                                <i class="fas fa-check-square"></i> Я согласен на обработку персональных данных <span class="text-danger">*</span>
+                            </label>
+                            {% if form.agree_pd.errors %}
+                            <div class="invalid-feedback d-block">{{ form.agree_pd.errors|first }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-paper-plane"></i> Отправить регистрацию
+                            </button>
+                            <a href="{% url 'competition_list' %}" class="btn btn-secondary btn-lg">
+                                <i class="fas fa-times"></i> Отмена
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .text-danger {
+        color: #dc3545 !important;
+        font-weight: bold;
+    }
+    
+    @media (max-width: 768px) {
+        .btn-lg {
+            font-size: 0.95rem;
+            padding: 0.5rem 1rem;
+        }
+    }
+</style>
+{% endblock %}

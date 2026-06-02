@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Редактирование - {{ athlete.full_name }} - CSP{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-4">
+    <div class="col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-light">
+                <h5 class="mb-0"><i class="fas fa-edit"></i> Редактирование спортсмена</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.full_name.id_for_label }}" class="form-label">
+                            <i class="fas fa-user"></i> {{ form.full_name.label }}
+                        </label>
+                        {{ form.full_name }}
+                        {% if form.full_name.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.full_name.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.birth_year.id_for_label }}" class="form-label">
+                                    <i class="fas fa-calendar"></i> {{ form.birth_year.label }}
+                                </label>
+                                {{ form.birth_year }}
+                                {% if form.birth_year.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.birth_year.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.team.id_for_label }}" class="form-label">
+                                    <i class="fas fa-flag"></i> {{ form.team.label }}
+                                </label>
+                                {{ form.team }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg flex-grow-1">
+                            <i class="fas fa-save"></i> Сохранить изменения
+                        </button>
+                        <a href="{% url 'athlete_detail' athlete.pk %}" class="btn btn-secondary btn-lg flex-grow-1">
+                            <i class="fas fa-arrow-left"></i> Отмена
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

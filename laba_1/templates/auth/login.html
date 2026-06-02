@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Вход - CSP{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-5">
+    <div class="col-md-5">
+        <div class="card shadow-lg">
+            <div class="card-body p-5">
+                <h2 class="card-title text-center mb-4">
+                    <i class="fas fa-sign-in-alt text-primary"></i> Вход
+                </h2>
+                
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.username.id_for_label }}" class="form-label">
+                            <i class="fas fa-user"></i> {{ form.username.label }}
+                        </label>
+                        {{ form.username }}
+                        {% if form.username.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.username.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.password.id_for_label }}" class="form-label">
+                            <i class="fas fa-lock"></i> {{ form.password.label }}
+                        </label>
+                        {{ form.password }}
+                        {% if form.password.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.password.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="form-check">
+                            {{ form.remember_me }}
+                            <label class="form-check-label" for="{{ form.remember_me.id_for_label }}">
+                                {{ form.remember_me.label }}
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-lg w-100 mb-3">
+                        <i class="fas fa-arrow-right"></i> Войти
+                    </button>
+                </form>
+                
+                <hr>
+                
+                <div class="text-center">
+                    <p class="text-muted mb-2">Нет аккаунта?</p>
+                    <a href="{% url 'register' %}" class="btn btn-outline-primary w-100">
+                        <i class="fas fa-user-plus"></i> Зарегистрироваться
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
