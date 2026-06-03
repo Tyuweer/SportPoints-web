@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block title %}Мой профиль - CSP{% endblock %}
+
+{% block content %}
+<div class="row py-4">
+    <div class="col-lg-3">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body text-center">
+                {% if profile.avatar %}
+                    <img src="{{ profile.avatar.url }}" alt="{{ user.username }}" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                {% else %}
+                    <div class="rounded-circle mx-auto mb-3" style="width: 150px; height: 150px; background-color: #e9ecef; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-user text-muted" style="font-size: 60px;"></i>
+                    </div>
+                {% endif %}
+                
+                <h5>{{ user.get_full_name|default:user.username }}</h5>
+                <p class="text-muted">@{{ user.username }}</p>
+                
+                {% if profile.email_verified %}
+                    <span class="badge bg-success mb-3">
+                        <i class="fas fa-check-circle"></i> Email подтвержден
+                    </span>
+                {% else %}
+                    <span class="badge bg-warning mb-3">
+                        <i class="fas fa-exclamation-circle"></i> Email не подтвержден
+                    </span>
+                {% endif %}
+                
+                <hr>
+                
+                <a href="{% url 'profile_edit' %}" class="btn btn-primary btn-sm w-100 mb-2">
+                    <i class="fas fa-edit"></i> Редактировать
+                </a>
+                <a href="{% url 'password_change' %}" class="btn btn-secondary btn-sm w-100 mb-2">
+                    <i class="fas fa-key"></i> Изменить пароль
+                </a>
+                <a href="{% url 'activity_log' %}" class="btn btn-info btn-sm w-100">
+                    <i class="fas fa-history"></i> История активности
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-9">
+        <div class="card shadow-sm">
+            <div class="card-header bg-light">
+                <h5 class="mb-0"><i class="fas fa-user-circle"></i> Информация профиля</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Имя</h6>
+                        <p>{{ user.first_name|default:"Не указано" }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Фамилия</h6>
+                        <p>{{ user.last_name|default:"Не указано" }}</p>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Email</h6>
+                        <p>{{ user.email }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Группа пользователя</h6>
+                        <p>
+                            {% if profile.group %}
+                                <span class="badge bg-info">{{ profile.group.get_name_display }}</span>
+                            {% else %}
+                                <span class="text-muted">Не назначена</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Телефон</h6>
+                        <p>{{ profile.phone|default:"Не указан" }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Город</h6>
+                        <p>{{ profile.city|default:"Не указан" }}</p>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Дата рождения</h6>
+                        <p>{{ profile.birth_date|default:"Не указана" }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Дата регистрации</h6>
+                        <p>{{ user.date_joined|date:"d.m.Y H:i" }}</p>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <h6 class="text-muted">Биография</h6>
+                    <p>{{ profile.bio|default:"Не указана" }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
