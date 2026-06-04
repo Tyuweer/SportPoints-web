@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Список спортсменов - CSP{% endblock %}
+{% block title %}Список спортсменов{% endblock %}
 
 {% block content %}
 <div class="py-4">
@@ -90,14 +90,17 @@
                                     <a href="{% url 'athlete_detail' athlete.pk %}" class="btn btn-sm btn-info" title="Просмотр">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    {% if user.is_authenticated %}
+                                      {% if user.profile.group.name == 'Coach' or user.profile.group.name == 'admin' %}
                                         <a href="{% url 'athlete_edit' athlete.pk %}" class="btn btn-sm btn-warning" title="Редактировать">
                                             <i class="fas fa-edit"></i>
                                         </a>
+                                    {% endif %}
+                                    {% if user.profile.group.name == 'admin' %}
                                         <button type="button" class="btn btn-sm btn-danger" data-id="{{ athlete.pk }}" title="Удалить">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     {% endif %}
+
                                 </td>
                             </tr>
                         {% endfor %}

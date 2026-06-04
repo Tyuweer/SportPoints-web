@@ -1,4 +1,4 @@
 py manage.py runserver
 python manage.py makemigrations
 python manage.py migrate
-python manage.py parse_protocol 6 --parser-type "Всероссийские соревнования" --manual
+python manage.py parse_protocol 3 --parser-type "Всероссийские соревнования" --manual

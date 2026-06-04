@@ -50,48 +50,45 @@ class ExcelHandler {
         }
     }
 
-    showNotification(type, message) {
-        const existing = document.querySelector('.ajax-notification');
-        if (existing) {
-            existing.remove();
-        }
+showNotification(type, message) {
+    const existing = document.querySelector('.ajax-notification');
+    if (existing) existing.remove();
 
-        const notification = document.createElement('div');
-        notification.className = `ajax-notification ajax-notification-${type}`;
-        notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 9999;
-            background: ${type === 'success' ? '#28a745' : '#dc3545'};
-            color: white;
-            padding: 12px 20px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            font-size: 14px;
-        `;
-        
-        notification.innerHTML = `
-            <span>${type === 'success' ? '✓' : '✗'}</span>
-            <span>${message}</span>
-            <button style="background: none; border: none; color: white; cursor: pointer; font-size: 18px;">&times;</button>
-        `;
-        
-        document.body.appendChild(notification);
+    const notification = document.createElement('div');
+    notification.className = `ajax-notification ajax-notification-${type}`;
+    notification.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 9999;
+        background: ${type === 'success' ? '#28a745' : '#dc3545'};
+        color: white;
+        padding: 8px 14px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        font-size: 13px;
+        max-width: 280px;
+    `;
+    
+    notification.innerHTML = `
+        <span style="font-size: 14px;">${type === 'success' ? '✓' : '✗'}</span>
+        <span style="flex: 1;">${message}</span>
+        <button style="background: none; border: none; color: white; cursor: pointer; font-size: 16px;">&times;</button>
+    `;
+    
+    document.body.appendChild(notification);
 
-        notification.querySelector('button').addEventListener('click', () => {
-            notification.remove();
-        });
+    notification.querySelector('button').addEventListener('click', () => {
+        notification.remove();
+    });
 
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.remove();
-              }
-          }, 3000);
-    }
+    setTimeout(() => {
+        if (notification.parentNode) notification.remove();
+    }, 2500);
+}
 }
 
 export default ExcelHandler;

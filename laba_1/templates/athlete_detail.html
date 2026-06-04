@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ athlete.full_name }} - Подробнее - CSP{% endblock %}
+{% block title %}{{ athlete.full_name }}Подробнее{% endblock %}
 
 {% block content %}
 <div class="py-4">
@@ -12,10 +12,12 @@
             <a href="{% url 'athlete_list' %}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Назад к списку
             </a>
-            {% if user.is_authenticated %}
+            {% if user.profile.group.name == 'Coach' or user.profile.group.name == 'admin' %}
                 <a href="{% url 'athlete_edit' athlete.pk %}" class="btn btn-warning">
                     <i class="fas fa-edit"></i> Редактировать
                 </a>
+            {% endif %}
+            {% if user.profile.group.name == 'admin' %}
                 <a href="{% url 'athlete_delete' athlete.pk %}" class="btn btn-danger"
                   onclick="return confirm('Вы уверены, что хотите удалить этого спортсмена?')">
                     <i class="fas fa-trash"></i> Удалить

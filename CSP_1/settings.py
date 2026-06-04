@@ -78,19 +78,16 @@ WSGI_APPLICATION = 'CSP_1.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',     
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
-    # PostgreSQL config (uncomment when PostgreSQL is set up)
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': 'csp_db',
-    #     'USER': 'postgres',
-    #     'PASSWORD': 'postgres',
-    #     'HOST': 'localhost',
-    #     'PORT': '5432',
-    # }
 }
+
+
 
 
 # Password validation
@@ -135,33 +132,21 @@ STATICFILES_DIRS = [
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# Cache Configuration (Redis) - for production only
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
         'LOCATION': 'unique-snowflake',
     }
 }
-# Uncomment when Redis is set up
-# CACHES = {
-#     'default': {
-#         'BACKEND': 'django_redis.cache.RedisCache',
-#         'LOCATION': 'redis://127.0.0.1:6379/1',
-#         'OPTIONS': {
-#             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-#         }
-#     }
-# }
+CACHE_TTL = 60 * 15  
 
-# Cache time-to-live (in seconds)
-CACHE_TTL = 60 * 15  # 15 minutes
-
-# Email Configuration — Gmail OAuth2
 # DEFAULT_FROM_EMAIL = 'Tyuweer01@gmail.com'
 # EMAIL_BACKEND = 'gmail_oauth_backend.mail.GmailBackend'
 
 # GMAIL_OAUTH_CLIENT_ID = '197953133033-па12cptfoll33lec81ni7jv7utt80dn0.apps.googleusercontent.com '
 # GMAIL_OAUTH_CLIENT_SECRET = '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'
+
+
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = 'noreply@csp.com'
 EMAIL_USE_LOCALTIME = True
@@ -173,6 +158,6 @@ LOGOUT_REDIRECT_URL = 'login'
 
 # Session
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
-SESSION_COOKIE_AGE = 1209600  # 2 weeks
+SESSION_COOKIE_AGE = 1209600 
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SECURE = False  # Set to True in production with HTTPS
+SESSION_COOKIE_SECURE = False

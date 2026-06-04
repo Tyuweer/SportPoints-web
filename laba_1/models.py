@@ -102,7 +102,7 @@ class UserProfile(models.Model):
 
 
 class EmailConfirmation(models.Model):
- 
+
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -348,44 +348,45 @@ class Result(models.Model):
     )
     rank = models.CharField(
         "Разряд",
-        max_length=10,
+        max_length=100,
         null=True,
         blank=True,
 
     )
     result_time = models.CharField(
         "Результат",
-        max_length=20,
+        max_length=100,
         null=True,
         blank=True,
 
     )
     final_result = models.CharField(
         "Результат финала",
-        max_length=20,
+        max_length=100,
         null=True,
         blank=True,
 
     )
     best_result = models.CharField(
         "Лучший результат",
-        max_length=20,
+        max_length=100,
         null=True,
         blank=True,
 
     )
     normative = models.CharField(
         "Норматив",
-        max_length=10,
+        max_length=100,
         null=True,
         blank=True,
 
     )
-    points = models.CharField(
-        "Очки",
-        default=0,
-
-    )
+    points = models.IntegerField(
+    "Очки",
+    default=0,
+    blank=True,
+    null=True,
+)
     
     # # Дополнительные флаги
     # is_relay = models.BooleanField(

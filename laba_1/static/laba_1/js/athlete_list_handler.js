@@ -76,9 +76,7 @@ class AthleteListHandler {
         });
     }
 
-    showNotification(type, message) {
-    console.log('showNotification called with:', type, message); // Отладка
-    
+showNotification(type, message) {
     const existing = document.querySelector('.ajax-notification');
     if (existing) existing.remove();
 
@@ -88,10 +86,10 @@ class AthleteListHandler {
     const text = message || (type === 'success' ? 'Спортсмен успешно удален!' : 'Ошибка при удалении');
     
     notification.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <span style="font-size: 18px;">${type === 'success' ? '✅' : '❌'}</span>
-            <span style="flex: 1;">${text}</span>
-            <button style="background: none; border: none; color: white; cursor: pointer; font-size: 18px;">&times;</button>
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 16px;">${type === 'success' ? '✅' : '❌'}</span>
+            <span style="flex: 1; font-size: 13px;">${text}</span>
+            <button style="background: none; border: none; color: white; cursor: pointer; font-size: 16px;">&times;</button>
         </div>
     `;
     
@@ -101,13 +99,14 @@ class AthleteListHandler {
         right: 20px;
         background: ${type === 'success' ? '#2ecc71' : '#e74c3c'};
         color: white;
-        padding: 12px 20px;
-        border-radius: 8px;
+        padding: 10px 16px;
+        border-radius: 6px;
         font-family: system-ui, sans-serif;
-        font-size: 14px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        font-size: 13px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
         z-index: 9999;
-        min-width: 250px;
+        max-width: 280px;
+        width: auto;
     `;
     
     document.body.appendChild(notification);
@@ -116,8 +115,9 @@ class AthleteListHandler {
     
     setTimeout(() => {
         if (notification.parentNode) notification.remove();
-    }, 3000);
+    }, 2500);
 }
 }
+
 
 export default AthleteListHandler;

@@ -29,6 +29,8 @@ from laba_1.core.utils import get_points_by_place, parse_time_to_seconds, calcul
 import uuid
 from datetime import timedelta
 from django.utils import timezone
+from django.core.cache import cache
+import hashlib
 
 
 def competition_registration(request):
@@ -231,6 +233,7 @@ def add_member(request):
                 distance=form.cleaned_data['distance'],
                 result_time=form.cleaned_data['result_time'],
             )
+            cache.clear()
 
             log_activity(
                 request.user,
@@ -268,7 +271,8 @@ def athlete_edit(request, pk):
         form = AthleteForm(request.POST, instance=athlete)
         if form.is_valid():
             form.save()
-            
+
+            cache.clear()
             log_activity(
                 request.user,
                 'edit_athlete',
@@ -290,6 +294,8 @@ def athlete_delete(request, pk):
     athlete_name = athlete.full_name
     athlete.removed = True
     athlete.save()
+
+    cache.clear()
     
     log_activity(
         request.user,
@@ -404,18 +410,35 @@ def athlete_delete_ajax(request, pk):
         })
 
 
+
 def athlete_list(request):
+
+    search_query = request.GET.get('search', '').strip()
+    team_filter = request.GET.get('team', '').strip()
+    page_number = request.GET.get('page', 1)
+    
+    # Создаем уникальный ключ кэша на основе всех параметров
+    cache_key_data = f'athlete_list_{search_query}_{team_filter}_{page_number}'
+    cache_key = f'athlete_list_{hashlib.md5(cache_key_data.encode()).hexdigest()}'
+    
+    # Пробуем получить данные из кэша
+    cached_context = cache.get(cache_key)
+    
+    if cached_context:
+        
+        return render(request, 'athlete_list.html', cached_context)
+    
+    
+
     athletes = Athlete.objects.filter(removed=False).select_related()
     
     # Поиск
-    search_query = request.GET.get('search', '').strip()
     if search_query:
         athletes = athletes.filter(
             Q(full_name__icontains=search_query) | Q(team__icontains=search_query)
         )
     
     # Фильтрация по команде
-    team_filter = request.GET.get('team', '').strip()
     if team_filter:
         athletes = athletes.filter(team=team_filter)
     
@@ -438,13 +461,13 @@ def athlete_list(request):
         return JsonResponse(data)
     
     # Пагинация
-    paginator = Paginator(athletes, 15)  # 15 записей на странице
+    paginator = Paginator(athletes, 15)
     page_number = request.GET.get('page', 1)
     page_obj = paginator.get_page(page_number)
     
     # Получить список всех команд для фильтра
     teams = Athlete.objects.filter(removed=False).values_list('team', flat=True).distinct()
-    teams = [t for t in teams if t]  # Исключить пустые
+    teams = [t for t in teams if t]
     
     context = {
         'athletes': page_obj,
@@ -455,10 +478,13 @@ def athlete_list(request):
         'total_count': athletes.count(),
         'page_title': 'Список спортсменов'
     }
+
+
+    cache.set(cache_key, context, settings.CACHE_TTL)
+    print(f"[CACHE SET] Сохранено в кэш на {settings.CACHE_TTL} секунд")
+    
     return render(request, 'athlete_list.html', context)
 
-
-# ===== AUTHENTICATION VIEWS =====
 
 def get_client_ip(request):
     """Получить IP адрес клиента"""
@@ -525,9 +551,17 @@ def register(request):
                 expires_at=timezone.now() + timedelta(hours=24)
             )
             
-            # Отправить email с подтверждением (в разработке используется console backend)
-            subject = 'Подтвердите вашу почту'
+            # СОЗДАЕМ ПЕРЕМЕННУЮ confirmation_url (ВОТ ЧЕГО НЕ ХВАТАЛО)
             confirmation_url = request.build_absolute_uri(f'/confirm-email/{token}/')
+            
+            # ВЫВОДИМ ССЫЛКУ В КОНСОЛЬ
+            print("\n" + "="*70)
+            print("📧 ДЛЯ ПОДТВЕРЖДЕНИЯ EMAIL ПЕРЕЙДИТЕ ПО ССЫЛКЕ:")
+            print(confirmation_url)
+            print("="*70 + "\n")
+            
+            # Отправить email с подтверждением
+            subject = 'Подтвердите вашу почту'
             message = f'Подтвердите вашу почту: {confirmation_url}'
             
             send_mail(
@@ -548,7 +582,6 @@ def register(request):
     
     context = {'form': form, 'page_title': 'Регистрация'}
     return render(request, 'auth/register.html', context)
-
 
 def login_view(request):
     # """Вход в аккаунт"""
@@ -752,3 +785,5 @@ def competition_list(request):
         'total_count': Competition.objects.count(),
     }
     return render(request, 'competition_list.html', context)
+
+
