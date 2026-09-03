@@ -1,7 +1,7 @@
 from .base import IParser
-
 from laba_1.parsers.kubok_rossii import KubokRossii_Parser
 from laba_1.parsers.goldfins import Goldfins_Parser
+from .krai_ocr_parser import KraiOcrParser
 
 PARSERS: dict[str, type[IParser]] = {
     "Первенство Края": KubokRossii_Parser,
@@ -10,6 +10,7 @@ PARSERS: dict[str, type[IParser]] = {
     "Всероссийские соревнования": KubokRossii_Parser,
     "Золотая Ласта": Goldfins_Parser,
     "Кубок Сибири": KubokRossii_Parser,
+    "Чемпионат Края (OCR)": KraiOcrParser,
 }
 
 
